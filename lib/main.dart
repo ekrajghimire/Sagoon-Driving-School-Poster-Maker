@@ -44,10 +44,10 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
   static const double _posterH = 1024;
 
   // Tuned for this specific template.
-  static const Rect _photoRect = Rect.fromLTWH(332, 150, 360, 360);
+  static const Rect _photoRect = Rect.fromLTWH(344, 134, 338, 338);
   static const double _photoCornerRadius = 180;
 
-  static const Rect _nameRect = Rect.fromLTWH(120, 560, 784, 80);
+  static const Rect _nameRect = Rect.fromLTWH(120, 660, 784, 80);
 
   final _boundaryKey = GlobalKey();
   final _nameController = TextEditingController(text: 'YOUR NAME');
@@ -78,9 +78,9 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
       });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not pick image: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not pick image: $e')));
     }
   }
 
@@ -149,9 +149,9 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Save failed: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Save failed: $e')));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -174,16 +174,13 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
         name: 'sagoon_poster_${DateTime.now().millisecondsSinceEpoch}.png',
       );
       await SharePlus.instance.share(
-        ShareParams(
-          text: 'Sagoon Poster',
-          files: [file],
-        ),
+        ShareParams(text: 'Sagoon Poster', files: [file]),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Share failed: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Share failed: $e')));
     }
   }
 
@@ -230,13 +227,14 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
               Expanded(
                 child: FilledButton.icon(
                   onPressed: _saving ? null : _savePoster,
-                  icon: _saving
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.download_rounded),
+                  icon:
+                      _saving
+                          ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                          : const Icon(Icons.download_rounded),
                   label: const Text('Save Poster'),
                 ),
               ),
@@ -255,9 +253,7 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sagoon Poster Maker'),
-      ),
+      appBar: AppBar(title: const Text('Sagoon Poster Maker')),
       body: SafeArea(
         child: Column(
           children: [
@@ -284,18 +280,19 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
                                 ),
                                 child: ColoredBox(
                                   color: Colors.black.withValues(alpha: 0.15),
-                                  child: _pickedXFile == null
-                                      ? const Center(
-                                          child: Icon(
-                                            Icons.person_rounded,
-                                            size: 96,
-                                            color: Colors.white70,
+                                  child:
+                                      _pickedXFile == null
+                                          ? const Center(
+                                            child: Icon(
+                                              Icons.person_rounded,
+                                              size: 96,
+                                              color: Colors.white70,
+                                            ),
+                                          )
+                                          : Image.memory(
+                                            _pickedBytes!,
+                                            fit: BoxFit.cover,
                                           ),
-                                        )
-                                      : Image.memory(
-                                          _pickedBytes!,
-                                          fit: BoxFit.cover,
-                                        ),
                                 ),
                               ),
                             ),
