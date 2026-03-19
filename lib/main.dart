@@ -6,7 +6,6 @@ import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:share_plus/share_plus.dart';
 
 import 'platform/save_png.dart';
 
@@ -157,33 +156,6 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
     }
   }
 
-  Future<void> _sharePoster() async {
-    try {
-      if (kIsWeb) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Share is not supported on Web build.')),
-        );
-        return;
-      }
-
-      final pngBytes = await _capturePosterPng();
-      final file = XFile.fromData(
-        pngBytes,
-        mimeType: 'image/png',
-        name: 'sagoon_poster_${DateTime.now().millisecondsSinceEpoch}.png',
-      );
-      await SharePlus.instance.share(
-        ShareParams(text: 'Sagoon Poster', files: [file]),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Share failed: $e')));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final controls = Padding(
@@ -222,31 +194,20 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: _saving ? null : _savePoster,
-                  icon:
-                      _saving
-                          ? const SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                          : const Icon(Icons.download_rounded),
-                  label: const Text('Save Poster'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: FilledButton.tonalIcon(
-                  onPressed: _sharePoster,
-                  icon: const Icon(Icons.ios_share_rounded),
-                  label: const Text('Share'),
-                ),
-              ),
-            ],
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: _saving ? null : _savePoster,
+              icon:
+                  _saving
+                      ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                      : const Icon(Icons.download_rounded),
+              label: const Text('Save Poster'),
+            ),
           ),
         ],
       ),
@@ -307,7 +268,7 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.poppins(
-                                    fontSize: 44,
+                                    fontSize: 55,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white,
                                     shadows: const [
