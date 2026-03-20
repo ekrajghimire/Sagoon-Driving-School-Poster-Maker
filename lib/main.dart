@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'crop_screen.dart';
 import 'platform/save_png.dart';
 
 void main() => runApp(const SagoonPosterMakerApp());
@@ -69,17 +70,26 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
         imageQuality: 95,
         maxWidth: 2000,
       );
-      if (xfile == null) return;
+      if (xfile == null || !mounted) return;
       final bytes = await xfile.readAsBytes();
-      setState(() {
-        _pickedXFile = xfile;
-        _pickedBytes = bytes;
-      });
+      if (!mounted) return;
+
+      final cropped = await Navigator.of(context).push<Uint8List>(
+        MaterialPageRoute<Uint8List>(
+          builder: (_) => CropScreen(imageBytes: bytes),
+        ),
+      );
+      if (cropped != null && mounted) {
+        setState(() {
+          _pickedXFile = xfile;
+          _pickedBytes = cropped;
+        });
+      }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not pick image: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not pick image: $e')),
+      );
     }
   }
 
