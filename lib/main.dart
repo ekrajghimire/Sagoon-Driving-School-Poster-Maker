@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'crop_screen.dart';
+import 'poster_layout.dart';
 import 'platform/save_png.dart';
 
 void main() => runApp(const SagoonPosterMakerApp());
@@ -37,18 +38,6 @@ class PosterMakerScreen extends StatefulWidget {
 }
 
 class _PosterMakerScreenState extends State<PosterMakerScreen> {
-  static const _templateAssetPath = 'assets/images/poster_template.png';
-
-  // Template is 1024x1024 (your uploaded PNG).
-  static const double _posterW = 1024;
-  static const double _posterH = 1024;
-
-  // Tuned for this specific template.
-  static const Rect _photoRect = Rect.fromLTWH(344, 134, 338, 338);
-  static const double _photoCornerRadius = 180;
-
-  static const Rect _nameRect = Rect.fromLTWH(120, 660, 784, 80);
-
   final _boundaryKey = GlobalKey();
   final _nameController = TextEditingController(text: 'YOUR NAME');
   final _picker = ImagePicker();
@@ -87,9 +76,9 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not pick image: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not pick image: $e')));
     }
   }
 
@@ -224,7 +213,7 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sagoon Poster Maker')),
+      appBar: AppBar(title: const Text('Sagoon Poster Maker by Manish')),
       body: SafeArea(
         child: Column(
           children: [
@@ -237,17 +226,20 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
                     child: FittedBox(
                       fit: BoxFit.contain,
                       child: SizedBox(
-                        width: _posterW,
-                        height: _posterH,
+                        width: PosterLayout.posterWidth,
+                        height: PosterLayout.posterHeight,
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
-                            Image.asset(_templateAssetPath, fit: BoxFit.cover),
+                            Image.asset(
+                              PosterLayout.templateAssetPath,
+                              fit: BoxFit.cover,
+                            ),
                             Positioned.fromRect(
-                              rect: _photoRect,
+                              rect: PosterLayout.photoRect,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(
-                                  _photoCornerRadius,
+                                  PosterLayout.photoCornerRadius,
                                 ),
                                 child: ColoredBox(
                                   color: Colors.black.withValues(alpha: 0.15),
@@ -268,7 +260,7 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
                               ),
                             ),
                             Positioned.fromRect(
-                              rect: _nameRect,
+                              rect: PosterLayout.nameRect,
                               child: Center(
                                 child: Text(
                                   _nameController.text.trim().isEmpty
@@ -278,16 +270,10 @@ class _PosterMakerScreenState extends State<PosterMakerScreen> {
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.poppins(
-                                    fontSize: 55,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                    shadows: const [
-                                      Shadow(
-                                        offset: Offset(0, 2),
-                                        blurRadius: 8,
-                                        color: Color(0xAA000000),
-                                      ),
-                                    ],
+                                    fontSize: PosterLayout.nameFontSize,
+                                    fontWeight: PosterLayout.nameFontWeight,
+                                    color: PosterLayout.nameColor,
+                                    shadows: PosterLayout.nameShadows,
                                   ),
                                 ),
                               ),

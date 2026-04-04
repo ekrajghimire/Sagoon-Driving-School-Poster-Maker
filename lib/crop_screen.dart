@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
 
+import 'poster_layout.dart';
+
 /// Full-screen crop UI. Pops with [Uint8List] on done, or null on cancel.
 class CropScreen extends StatefulWidget {
   const CropScreen({
@@ -63,7 +65,8 @@ class _CropScreenState extends State<CropScreen> {
           image: widget.imageBytes,
           controller: _controller,
           onCropped: _onCropped,
-          withCircleUi: true,
+          aspectRatio: PosterLayout.cropAspectRatio,
+          withCircleUi: false,
           interactive: true,
           baseColor: Colors.black,
           maskColor: Colors.black.withValues(alpha: 0.6),
